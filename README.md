@@ -10,4 +10,4 @@ git clone https://github.com/yourname/osinthound.git
 cd osinthound
 ./setup.sh
 
-Currently Working On Imptoving ease of Use :-)
+Currently Working On Improving ease of Use :-)
