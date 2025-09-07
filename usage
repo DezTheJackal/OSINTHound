@@ -1,0 +1,11 @@
+# Accept legal notice
+osinthound consent
+
+# Username recon (default: dezthejackal if no username given)
+osinthound user dezthejackal
+
+# Domain intel
+osinthound domain example.com
+
+# Email validation
+osinthound email test@example.org
