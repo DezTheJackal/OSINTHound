@@ -9,3 +9,5 @@ A lightweight, dependency-free Python 3 OSINT reconnaissance tool.
 git clone https://github.com/yourname/osinthound.git
 cd osinthound
 ./setup.sh
+
+Currently Working On Imptoving ease of Use :-)
