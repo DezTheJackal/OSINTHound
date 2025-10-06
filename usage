@@ -1,11 +1,530 @@
-# Accept legal notice
-osinthound consent
+# 📘 OSINTHound Usage Guide
 
-# Username recon (default: dezthejackal if no username given)
-osinthound user dezthejackal
+Complete guide for using OSINTHound effectively and ethically.
 
-# Domain intel
-osinthound domain example.com
+---
 
-# Email validation
-osinthound email test@example.org
+## 🎯 Quick Reference
+
+```bash
+# Help & Info
+osinthound -h                    # Show help
+osinthound --version             # Show version
+osinthound --reset-consent       # Reset legal consent
+
+# Core Functions
+osinthound -u <username>         # Username reconnaissance
+osinthound -d <domain>           # Domain intelligence
+osinthound -e <email>            # Email validation
+```
+
+---
+
+## 📖 Table of Contents
+
+1. [Getting Started](#getting-started)
+2. [Username Reconnaissance](#username-reconnaissance)
+3. [Domain Intelligence](#domain-intelligence)
+4. [Email Analysis](#email-analysis)
+5. [Real-World Scenarios](#real-world-scenarios)
+6. [Tips & Best Practices](#tips--best-practices)
+7. [Limitations](#limitations)
+
+---
+
+## Getting Started
+
+### First Time Setup
+
+1. **Run any command to trigger consent:**
+```bash
+osinthound -u testuser
+```
+
+2. **Read the legal notice carefully**
+
+3. **Type `yes` to accept terms**
+
+4. **Start using OSINTHound!**
+
+### Testing Your Installation
+
+```bash
+# Test with a known account
+osinthound -u github
+
+# Test with a known domain
+osinthound -d google.com
+
+# Test with valid email format
+osinthound -e test@example.com
+```
+
+---
+
+## Username Reconnaissance
+
+### Basic Usage
+
+```bash
+osinthound -u <username>
+```
+
+### What It Does
+
+Checks if a username exists on these platforms:
+- **GitHub** - Developer profiles, repositories
+- **Reddit** - User posts, comments, karma
+- **Twitter/X** - Social media presence
+- **Instagram** - Photos, followers
+- **Medium** - Blog articles, publications
+- **LinkedIn** - Professional profile
+
+### Example Output
+
+```bash
+$ osinthound -u torvalds
+
+🔍 Username Reconnaissance: 'torvalds'
+==================================================
+  ✅ GitHub          FOUND → https://github.com/torvalds
+  ❌ Reddit          Not found
+  ❌ Twitter/X       Not found
+  ❌ Instagram       Not found
+  ❌ Medium          Not found
+  ❌ LinkedIn        Not found
+
+📊 Summary: Found 1/6 profiles
+```
+
+### Use Cases
+
+**✅ Good Uses:**
+- Finding your own profiles across platforms
+- Locating public social media for networking
+- Researching public figures (journalists, authors)
+- Competitive intelligence (legal)
+- Digital footprint awareness
+
+**❌ Bad Uses:**
+- Stalking or harassment
+- Unauthorized surveillance
+- Identity theft preparation
+- Doxxing
+
+### Tips
+
+**Usernames to try:**
+- Exact username
+- Username with/without numbers
+- Username with underscores
+- Professional vs casual usernames
+
+**Common patterns:**
+```bash
+osinthound -u johnsmith
+osinthound -u john_smith
+osinthound -u jsmith
+osinthound -u johnsmith123
+```
+
+**Interpreting results:**
+- `FOUND` = Profile definitely exists
+- `Not found (404)` = Profile doesn't exist
+- `HTTP 403` = May exist but access blocked
+- `Error` = Network issue, site down, or rate limit
+
+---
+
+## Domain Intelligence
+
+### Basic Usage
+
+```bash
+osinthound -d <domain.com>
+```
+
+### What It Does
+
+Gathers public information about a domain:
+1. **DNS Resolution** - Converts domain to IP addresses
+2. **Reverse DNS** - Finds hostname of IP
+3. **HTTPS Check** - Tests SSL/TLS connectivity
+4. **Server Detection** - Identifies web server software
+5. **Port Scanning** - Checks common open ports
+
+### Example Output
+
+```bash
+$ osinthound -d github.com
+
+🌐 Domain Intelligence: 'github.com'
+==================================================
+  📍 IP Address(es): 140.82.121.4
+  🔄 Reverse DNS: lb-140-82-121-4-iad.github.com
+  🌍 HTTPS Status: 200 OK
+  💻 Server: GitHub.com
+
+  🔌 Port Scan (common ports):
+     ✅ Port    80 OPEN
+     ✅ Port   443 OPEN
+     ✅ Port    22 OPEN
+```
+
+### Ports Checked
+
+| Port | Service | Description |
+|------|---------|-------------|
+| 80 | HTTP | Web server (unencrypted) |
+| 443 | HTTPS | Secure web server |
+| 22 | SSH | Remote server access |
+| 21 | FTP | File transfer |
+| 25 | SMTP | Email server |
+| 3306 | MySQL | Database |
+| 8080 | HTTP-Alt | Alternative web server |
+
+### Use Cases
+
+**✅ Good Uses:**
+- Checking your own website configuration
+- Authorized security assessments
+- Research for bug bounty programs
+- Infrastructure mapping (authorized)
+- Verifying DNS changes
+
+**❌ Bad Uses:**
+- Unauthorized network scanning
+- Vulnerability hunting without permission
+- DDoS preparation
+- Exploit development
+
+### Tips
+
+**Domain format:**
+```bash
+# Correct
+osinthound -d example.com
+osinthound -d subdomain.example.com
+
+# Incorrect
+osinthound -d http://example.com    # Remove http://
+osinthound -d example.com/page      # Remove paths
+osinthound -d www.example.com       # May work, but try without www first
+```
+
+**Understanding results:**
+
+**Multiple IPs:**
+```
+📍 IP Address(es): 1.2.3.4, 5.6.7.8, 9.10.11.12
+```
+→ Website uses load balancing or CDN (Cloudflare, AWS)
+
+**Server headers:**
+```
+💻 Server: nginx/1.18.0
+```
+→ Running nginx web server version 1.18.0
+
+**Open port 22:**
+```
+✅ Port    22 OPEN
+```
+→ SSH is enabled (common for managed servers)
+
+**Open port 3306:**
+```
+✅ Port  3306 OPEN
+```
+→ ⚠️ MySQL exposed to internet (potential security risk)
+
+---
+
+## Email Analysis
+
+### Basic Usage
+
+```bash
+osinthound -e <email@domain.com>
+```
+
+### What It Does
+
+Validates and analyzes email addresses:
+1. **Format Check** - Validates syntax (RFC 5322 compliant)
+2. **Domain Validation** - Checks if domain exists
+3. **DNS Resolution** - Verifies domain resolves
+4. **Mail Server Check** - Tests for MX records
+
+### Example Output
+
+```bash
+$ osinthound -e contact@github.com
+
+📧 Email Analysis: 'contact@github.com'
+==================================================
+  ✅ Email format is valid
+  📍 Domain: github.com
+  ✅ Domain exists and resolves
+  📬 Mail server appears configured
+```
+
+### Valid Email Formats
+
+```bash
+# Valid
+user@example.com
+user.name@example.com
+user+tag@example.com
+user_name@example.co.uk
+123@example.com
+
+# Invalid
+user@                    # Missing domain
+@example.com            # Missing local part
+user example.com        # Missing @
+user@domain             # Missing TLD
+user @example.com       # Space in address
+```
+
+### Use Cases
+
+**✅ Good Uses:**
+- Validating email format before sending
+- Checking if your domain email is configured
+- Verifying business contact emails
+- Form validation testing
+
+**❌ Bad Uses:**
+- Spamming
+- Phishing preparation
+- Unauthorized email harvesting
+- Creating email lists without permission
+
+### Tips
+
+**Result meanings:**
+
+```
+✅ Email format is valid
+```
+→ Syntax is correct, follows email standards
+
+```
+✅ Domain exists and resolves
+```
+→ Domain has DNS records, website probably exists
+
+```
+📬 Mail server appears configured
+```
+→ Domain can receive emails (MX records exist)
+
+```
+❌ Invalid email format
+```
+→ Syntax error, won't work
+
+```
+⚠️ Warning: Domain may not exist
+```
+→ DNS lookup failed, typo or domain not registered
+
+```
+⚠️ No mail server detected
+```
+→ Domain exists but can't receive emails
+
+**Common issues:**
+
+| Result | Likely Cause | Action |
+|--------|-------------|--------|
+| Invalid format | Typo in email | Check spelling |
+| Domain not found | Domain doesn't exist | Verify domain name |
+| No mail server | Domain has no email | Contact might be incorrect |
+
+---
+
+## Real-World Scenarios
+
+### Scenario 1: Personal Digital Footprint Audit
+
+**Goal:** Find all your online accounts
+
+```bash
+# Check your common usernames
+osinthound -u your_username
+osinthound -u yourname_alt
+osinthound -u old_username
+
+# Check your domains
+osinthound -d yourwebsite.com
+osinthound -d yourblog.com
+
+# Verify your emails
+osinthound -e you@gmail.com
+osinthound -e you@yourwebsite.com
+```
+
+**What to do with results:**
+- Delete old accounts you don't use
+- Secure accounts you want to keep
+- Update privacy settings
+- Remove personal information
+
+---
+
+### Scenario 2: Website Launch Check
+
+**Goal:** Verify your new website is configured correctly
+
+```bash
+# Check domain resolution
+osinthound -d yournewsite.com
+
+# Check www subdomain
+osinthound -d www.yournewsite.com
+
+# Verify business email
+osinthound -e contact@yournewsite.com
+osinthound -e support@yournewsite.com
+```
+
+**Expected results:**
+- ✅ Domain resolves to your hosting IP
+- ✅ Ports 80 and 443 open
+- ✅ Email domain configured
+- ✅ Server headers show correct software
+
+---
+
+### Scenario 3: Bug Bounty Reconnaissance
+
+**Goal:** Initial information gathering (authorized programs only)
+
+```bash
+# Get target company's domain info
+osinthound -d targetcompany.com
+
+# Check for exposed services
+# (Review port scan results)
+
+# Find employee social media (public profiles only)
+osinthound -u company_account
+osinthound -u ceo_username
+```
+
+**Important:**
+- ✅ Only test in-scope domains
+- ✅ Follow program rules
+- ✅ Don't scan aggressively
+- ✅ Report findings responsibly
+
+---
+
+### Scenario 4: Phishing Investigation
+
+**Goal:** Analyze suspicious email
+
+```bash
+# Check sender email
+osinthound -e suspicious@sender.com
+
+# Check domain in email
+osinthound -d sender.com
+
+# Compare with legitimate domain
+osinthound -d legitimate-company.com
+```
+
+**Red flags:**
+- ❌ Invalid email format
+- ❌ Domain doesn't exist
+- ❌ No mail server configured
+- ❌ Domain registered recently
+- ❌ Server location doesn't match company
+
+---
+
+### Scenario 5: Open Source Intelligence Research
+
+**Goal:** Research public figure for journalism/research
+
+```bash
+# Find their social media presence
+osinthound -u public_figure_username
+
+# Check their professional website
+osinthound -d publicfigure.com
+
+# Verify contact email
+osinthound -e media@publicfigure.com
+```
+
+**Ethics:**
+- ✅ Only use public information
+- ✅ Respect privacy boundaries
+- ✅ Don't harass or contact unwanted
+- ✅ Use for legitimate research/journalism
+
+---
+
+## Tips & Best Practices
+
+### 🎯 Efficiency Tips
+
+**1. Be Specific**
+```bash
+# Good
+osinthound -u exact_username
+
+# Less effective
+osinthound -u generic_name
+```
+
+**2. Try Variations**
+```bash
+osinthound -u username       # Original
+osinthound -u user_name      # With underscore
+osinthound -u username123    # With numbers
+```
+
+**3. Save Results**
+```bash
+osinthound -u target > results.txt
+osinthound -d domain.com >> results.txt
+osinthound -e email@domain.com >> results.txt
+```
+
+**4. Automate Repetitive Tasks**
+```bash
+#!/bin/bash
+for user in user1 user2 user3; do
+    osinthound -u $user
+done
+```
+
+### 🛡️ Security Best Practices
+
+**1. Use Authorized Targets Only**
+- Get written permission
+- Stay in scope
+- Document authorization
+
+**2. Respect Rate Limits**
+- Don't scan too fast
+- Add delays between scans
+- Rotate IP if needed (VPN)
+
+**3. Minimize Impact**
+- Use read-only operations
+- Don't overload target servers
+- Scan during off-hours
+
+**4. Protect Your Privacy**
+- Use VPN if needed
+- Don't use personal accounts
+- Clear logs on shared systems
+
+
+
